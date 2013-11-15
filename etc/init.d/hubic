@@ -1,0 +1,149 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          hubic
+# Required-Start:    dbus networking
+# Required-Stop:     dbus networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the hubiC synchronization client
+# Description:       starts the hubiC synchronization client
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="hubiC"
+NAME=hubic
+DAEMON=/usr/bin/dbus-launch
+EXEC=/usr/bin/hubic
+RUNFILE=/var/run/$NAME
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Define LSB log_* functions.
+. /lib/lsb/init-functions
+
+
+
+if [[ -z "$EMAIL" || -z "$PASSWORD_PATH" || -z "$SYNC_DIR" ]]; then
+	log_failure_msg "The synchronization is not configured in /etc/default/hubic."
+        exit 3
+fi
+if [ ! -r "$PASSWORD_PATH" ]; then
+	log_failure_msg "The password file '$PASSWORD_PATH' is not readable."
+	exit 3
+fi
+
+if [[ -n "$EXCLUSIONS_PATH" && ! -r "$EXCLUSIONS_PATH" ]]; then
+	log_failure_msg "The exclusion file '$EXCLUSIONS_PATH' is not readable."
+	exit 3
+fi
+
+
+do_exec()
+{
+	. $RUNFILE
+	DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" $EXEC $@ 2> /dev/null
+}
+
+check_exec()
+{
+	if [ $? != 0 ]; then
+                log_end_msg 1
+                log_failure_msg "$1"
+		kill $DBUS_SESSION_BUS_PID 2> /dev/null
+		rm -f $RUNFILE
+                exit 3
+        fi
+}
+
+add_exclusions()
+{
+        if [ -n "$EXCLUSIONS_PATH" ]; then
+        	while read  -r exclusion; do
+			if [[ -n "$exclusion" && ${exclusion::1} != "#" ]]; then
+				do_exec exclude add "$SYNC_DIR/$exclusion"
+			fi
+		done < "$EXCLUSIONS_PATH"
+	fi
+}
+
+do_reload()
+{
+	check_start
+	log_begin_msg "Updating the sync directory and the exclusions of $DESC"
+
+	do_exec pause
+	do_exec exclude clear
+	do_exec syncdir "$SYNC_DIR"
+	add_exclusions
+	do_exec resume
+	log_end_msg 0
+}
+
+do_start()
+{
+	if [ -f $RUNFILE ]; then
+		log_warning_msg "$DESC already running" && exit 0h
+	fi
+
+	log_begin_msg "Starting $DESC"
+	$DAEMON > $RUNFILE 2> /dev/null
+	check_exec "dbus failed to start"
+	do_exec login --password_path="$PASSWORD_PATH" $EMAIL "$SYNC_DIR"
+	check_exec "login failed"
+	# 1.1.13.22 - leep to avoid the error "Command failed: System.InvalidOperationException: This method requires a connection."
+	sleep 1
+	add_exclusions
+	log_end_msg 0
+}
+
+check_start()
+{
+        if [ ! -f $RUNFILE ]; then
+                log_failure_msg "$DESC is not running" && exit 3
+        fi
+}
+
+
+do_stop()
+{
+	check_start
+	log_begin_msg "Stopping $DESC"
+	do_exec stop
+	check_exec "error while stopping the client"
+	kill $DBUS_SESSION_BUS_PID
+	check_exec "dbus is not running"
+	rm -f $RUNFILE
+	log_end_msg 0
+}
+
+case "$1" in
+start)
+	do_start
+	;;
+stop)
+	do_stop
+	;;
+restart)
+	do_stop
+	do_start
+	;;
+reload)
+	do_reload
+	;;
+status)
+	check_start
+	log_success_msg "$DESC is running"
+	;;
+syncstatus)
+	check_start
+	do_exec status
+	check_exec "failed to retrieve the status"
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|status|syncstatus}" >&2
+	exit 3
+	;;
+esac
+
