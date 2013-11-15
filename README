@@ -15,7 +15,7 @@ Dependencies
 
 Installation
 ------------
-Commands to launch as root :
+On Debian, run this commands as root:
 
     git clone https://github.com/leizh/hubic-init-script.git
     . hubic-init-script/build-deb.sh
