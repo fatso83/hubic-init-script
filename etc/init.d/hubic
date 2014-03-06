@@ -24,8 +24,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 . /lib/lsb/init-functions
 
 
-
-if [[ -z "$EMAIL" || -z "$PASSWORD_PATH" || -z "$SYNC_DIR" ]]; then
+if [ -z "$EMAIL" ] || [ -z "$PASSWORD_PATH" ] || [ -z "$SYNC_DIR" ]; then
 	log_failure_msg "The synchronization is not configured in /etc/default/hubic."
         exit 3
 fi
@@ -34,7 +33,7 @@ if [ ! -r "$PASSWORD_PATH" ]; then
 	exit 3
 fi
 
-if [[ -n "$EXCLUSIONS_PATH" && ! -r "$EXCLUSIONS_PATH" ]]; then
+if [ -n "$EXCLUSIONS_PATH" ] && [ ! -r "$EXCLUSIONS_PATH" ]; then
 	log_failure_msg "The exclusion file '$EXCLUSIONS_PATH' is not readable."
 	exit 3
 fi
