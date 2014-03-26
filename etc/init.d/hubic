@@ -60,7 +60,7 @@ add_exclusions()
 {
         if [ -n "$EXCLUSIONS_PATH" ]; then
         	while read  -r exclusion; do
-			if [[ -n "$exclusion" && ${exclusion::1} != "#" ]]; then
+			if [ -n "$exclusion" ] && [ ${exclusion::1} != "#" ]; then
 				do_exec exclude add "$SYNC_DIR/$exclusion"
 			fi
 		done < "$EXCLUSIONS_PATH"
