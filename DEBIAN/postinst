@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+  configure)
+     adduser --quiet \
+             --system \
+             --group \
+             --home "/var/run/hubic" \
+             hubic
+     chown hubic:hubic /etc/hubic/password /etc/hubic/exclusions
+  ;;
+esac
+
+exit 0;
