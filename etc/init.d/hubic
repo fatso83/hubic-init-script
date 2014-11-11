@@ -14,7 +14,7 @@ DESC="hubiC"
 NAME=hubic
 DAEMON=/usr/bin/dbus-launch
 EXEC=/usr/bin/hubic
-RUNFILE=/var/run/$NAME
+RUNFILE=/var/run/$NAME.run
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Read configuration variable file if it is present
@@ -42,7 +42,7 @@ fi
 do_exec()
 {
 	. $RUNFILE
-	DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" $EXEC $@ 2> /dev/null
+	DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" start-stop-daemon --start --chuid $USER --exec $EXEC --chdir $PWD -- $@
 }
 
 check_exec()
@@ -83,16 +83,16 @@ do_reload()
 do_start()
 {
 	if [ -f $RUNFILE ]; then
-		log_warning_msg "$DESC already running" && exit 0h
+		log_warning_msg "$DESC already running" && exit 0
 	fi
-
 	log_begin_msg "Starting $DESC"
-	$DAEMON > $RUNFILE 2> /dev/null
+
+	start-stop-daemon --start --chuid $USER --exec $DAEMON > $RUNFILE
 	check_exec "dbus failed to start"
 	do_exec login --password_path="$PASSWORD_PATH" $EMAIL "$SYNC_DIR"
 	check_exec "login failed"
-	# 1.1.13.22 - leep to avoid the error "Command failed: System.InvalidOperationException: This method requires a connection."
-	sleep 1
+	# Wait to avoid the error "Command failed: System.InvalidOperationException: This method requires a connection."
+	wait_connection
 	add_exclusions
 	log_end_msg 0
 }
@@ -104,6 +104,17 @@ check_start()
         fi
 }
 
+check_connection()
+{
+	do_exec status | grep '^Account: ' | cut -d':' -f2
+}
+
+wait_connection()
+{
+	while [ -z $(check_connection) ]; do
+		sleep 1
+	done
+}
 
 do_stop()
 {
@@ -131,18 +142,8 @@ restart)
 reload)
 	do_reload
 	;;
-status)
+*)
 	check_start
-	log_success_msg "$DESC is running"
-	;;
-syncstatus)
-	check_start
-	do_exec status
-	check_exec "failed to retrieve the status"
-	;;
-  *)
-	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|status|syncstatus}" >&2
-	exit 3
+	do_exec $@
 	;;
 esac
-

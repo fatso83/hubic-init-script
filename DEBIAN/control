@@ -1,8 +1,9 @@
 Package: hubic-init-script
-Version: 0.2
+Version: 0.3
 Section: net
 Priority: optional
 Architecture: all
 Depends: hubic
 Maintainer: leizh@free.fr
 Description: hubiC init.d script
+Pre-Depends: adduser

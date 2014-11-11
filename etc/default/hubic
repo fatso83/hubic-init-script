@@ -1,5 +1,6 @@
 EMAIL=
-PASSWORD_PATH=/etc/hubic/password
-
 SYNC_DIR=
+
+USER=hubic
+PASSWORD_PATH=/etc/hubic/password
 EXCLUSIONS_PATH=/etc/hubic/exclusions

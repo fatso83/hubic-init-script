@@ -1,16 +1,17 @@
 Overview
 --------
 This is an init.d script to run the hubiC synchronization client as a service in a non graphic environment.
+The service runs as a specific user.
 
 Features
 --------
- * start|stop|restart|status
- * reload : update the sync directory and the exclusions of $DESC
- * synstatus : display the synchronization status
+ * start|stop|restart
+ * reload : update the sync directory and the exclusions list
+ * <parameters from the hubic client> : backup info, etc...
 
 Dependencies
 ------------
- * [hubiC](https://forums.hubic.com/showthread.php?272-hubiC-for-Linux-beta-2-is-out-!)
+ * [hubiC](https://hubic.com/en/downloads)
  * dbus-launch (package dbus-x11)
 
 Installation
@@ -19,4 +20,4 @@ On Debian, run this commands as root:
 
     git clone https://github.com/leizh/hubic-init-script.git
     . hubic-init-script/build-deb.sh
-    dpkg -i hubic-init-script_0.1_all.deb
+    dpkg -i hubic-init-script_0.3_all.deb
