@@ -7,7 +7,7 @@ Features
 --------
  * start|stop|restart
  * reload : update the sync directory and the exclusions list
- * <parameters from the hubic client> : backup info, etc...
+ * *parameters from the hubic client* : backup info, etc...
 
 Dependencies
 ------------
