@@ -1,7 +1,7 @@
 Overview
 --------
 This is an init.d script to run the hubiC synchronization client as a service in a non graphic environment.
-The service runs as the `hubic` specific user.
+The service runs as the `hubic` user.
 
 Features
 --------
@@ -73,6 +73,6 @@ sudo -u hubic hubic backup attach Bilder /mnt/data/Bilder
 sudo -u hubic hubic backup attach priv /mnt/backup/priv/
 sudo -u hubic hubic backup attach musikkarkiv /mnt/data/musikkarkiv/
 
-# create any other backups
-hubic backup create  --frequency=weekly /mnt/data/video_archive/
+# create any other new backups you might need
+sudo -u hubic hubic backup create  --frequency=weekly /mnt/data/video_archive/
 ```
