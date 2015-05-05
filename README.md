@@ -33,7 +33,46 @@ edit the following three files to set various config values:
 ## Debugging errors
 Consider trying out the standalone client before debugging any errors with the init script:
 ```
+# start a shell as the hubic user
+sudo su -l -s /bin/bash hubic
+
+# export the DBUS environment variable
+export $(cat /run/hubic.run )
+
+# check that the dbus daemon is actually running
+hubic status
+
+# if not, start the daemon like this
 dbus-lanch --sh-syntax > dbus.dat
 source dbus.dat && rm dbus.dat
-hubic --password_path=/etc/hubic/password youruser@domain.com
+
+# you might get "Command failed: System.InvalidOperationException: Already connected." on this. Not dangerous :)
+hubic --password_path=/etc/hubic/password $EMAIL "$SYNC_DIR"
+
+# you should be able to get meaningful output at this stage
+hubic status
+```
+
+## Backing up directories
+These directories need to be readable for the `hubic` user! We are also assuming hubic has been 
+configured and found working at this point.
+
+```
+# Read the DBUS session environment variable
+export $(cat /run/hubic.run )
+
+# check existing backups
+sudo -u hubic hubic backup info
+       Name  Attached  Local path  Last backup      Size
+     Bilder        No           -            -  12.87 GB
+musikkarkiv        No           -            -       0 B
+       priv        No           -            -  15.93 GB
+
+# attach the ones that are accessible on this machine, so that they can continue
+sudo -u hubic hubic backup attach Bilder /mnt/data/Bilder
+sudo -u hubic hubic backup attach priv /mnt/backup/priv/
+sudo -u hubic hubic backup attach musikkarkiv /mnt/data/musikkarkiv/
+
+# create any other backups
+hubic backup create  --frequency=weekly /mnt/data/video_archive/
 ```
