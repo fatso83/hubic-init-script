@@ -10,6 +10,9 @@ case "$1" in
              --home "/var/lib/hubic" \
              hubic
      chown hubic:hubic /etc/hubic/password /etc/hubic/exclusions
+     
+     # add to default runlevel
+     sudo update-rc.d hubic defaults
   ;;
 esac
 
