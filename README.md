@@ -1,22 +1,25 @@
 Overview
 --------
-This is an init.d script to run the hubiC synchronization client as a service in a non graphic environment.
-The service runs as the `hubic` user.
+This is an init script to run the [hubiC](https://hubic.com) client as a service 
+in a non graphic environment. The service runs as the `hubic` user.
+For the uninitiated, hubiC is a cloud storage provider that offers very reasonable
+prices (5 euro/month for 10TB) for backup needs and a Linux client that can run on the server.
 
 Features
 --------
  * start|stop|restart
  * reload : update the sync directory and the exclusions list
- * *parameters from the hubic client* : backup info, etc...
-
+ * supports backup of directories (after manual configuration)
+ * supports synchronization
+ 
 Dependencies
 ------------
- * [hubiC](https://hubic.com/en/downloads)
+ * [hubiC linux client](https://hubic.com/en/downloads)
  * dbus-launch (package dbus-x11)
 
 Installation
 ------------
-On Debian, run these commands as root:
+On Debian and Ubuntu, run these commands as root:
 
     git clone https://github.com/leizh/hubic-init-script.git
     . hubic-init-script/build-deb.sh
@@ -55,7 +58,8 @@ hubic status
 
 ## Backing up directories
 These directories need to be readable for the `hubic` user! We are also assuming hubic has been 
-configured and found working at this point.
+configured and found working at this point. This configuration only needs to be done once, as
+the everything will load automatically on each boot after this.
 
 ```
 # Read the DBUS session environment variable
