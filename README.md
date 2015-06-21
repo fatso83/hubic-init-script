@@ -33,6 +33,13 @@ edit the following three files to set various config values:
 /etc/hubic/password
 ```
 
+Utility script
+--------------
+The `hubic.sh` script can be used to control the hubic process without having to 
+start up a separate, and is meant to be a drop-in replacement for hubic:
+`hubic.sh status`
+`hubic.sh backup info`
+
 ## Debugging errors
 Consider trying out the standalone client before debugging any errors with the init script:
 ```
