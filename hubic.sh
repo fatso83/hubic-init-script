@@ -7,9 +7,17 @@
 
 # The user the daemon runs as 
 HUBIC_USER=hubic
+RUNFILE=/var/run/hubic.run
 
 # read all environment variables from the file created by the init script
-export $(cat /var/run/hubic.run )
+if [ ! -e ${RUNFILE} ];then
+    echo "HubiC does not seem to be running. There is no file at ${RUNFILE}"
+    echo "Are you sure the init script has run yet?"
+    echo "See the section called Debugging Errors in the Readme if things go awry"
+    exit 1
+fi
+
+export $(cat ${RUNFILE})
 
 # run the hubic commands as the hubic user
 sudo -E -u $HUBIC_USER hubic $@
