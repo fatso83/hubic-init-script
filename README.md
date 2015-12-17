@@ -52,12 +52,16 @@ export $(cat /run/hubic.run )
 # check that the dbus daemon is actually running
 hubic status
 
-# if not, start the daemon like this
-dbus-lanch --sh-syntax > dbus.dat
+# if the daemon was not running, start the daemon like this
+dbus-launch --sh-syntax > dbus.dat
 source dbus.dat && rm dbus.dat
 
+# source the config variables for use in the next command
+source /etc/default/hubic
+
 # you might get "Command failed: System.InvalidOperationException: Already connected." on this. Not dangerous :)
-hubic --password_path=/etc/hubic/password $EMAIL "$SYNC_DIR"
+# this should reveal whether you have wrong password, wrong email or missing sync directory
+hubic login --password_path=/etc/hubic/password $EMAIL "$SYNC_DIR"
 
 # you should be able to get meaningful output at this stage
 hubic status
