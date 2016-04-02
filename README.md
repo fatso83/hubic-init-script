@@ -21,8 +21,8 @@ Installation
 ------------
 On Debian and Ubuntu, run these commands as root:
 
-    git clone https://github.com/leizh/hubic-init-script.git
-    . hubic-init-script/build-deb.sh
+    git clone https://github.com/fatso83/hubic-init-script.git
+    hubic-init-script/build-deb.sh
     dpkg -i hubic-init-script_0.3_all.deb
 
 This will install the script ready to be run at boot-time, but you will need to 
@@ -78,10 +78,10 @@ export $(cat /run/hubic.run )
 
 # check existing backups
 sudo -u hubic hubic backup info
-       Name  Attached  Local path  Last backup      Size
+     Name  Attached  Local path  Last backup      Size
      Bilder        No           -            -  12.87 GB
-musikkarkiv        No           -            -       0 B
-       priv        No           -            -  15.93 GB
+     musikkarkiv        No           -            -       0 B
+     priv        No           -            -  15.93 GB
 
 # attach the ones that are accessible on this machine, so that they can continue
 sudo -u hubic hubic backup attach Bilder /mnt/data/Bilder
