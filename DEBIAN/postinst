@@ -7,9 +7,12 @@ case "$1" in
      adduser --quiet \
              --system \
              --group \
-             --home "/var/run/hubic" \
+             --home "/var/lib/hubic" \
              hubic
      chown hubic:hubic /etc/hubic/password /etc/hubic/exclusions
+     
+     # add to default runlevel
+     update-rc.d hubic defaults
   ;;
 esac
 

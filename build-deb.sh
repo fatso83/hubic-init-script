@@ -4,6 +4,7 @@ echo $pkgDir
 tmpDir="/tmp/hubic-init-script"
 rm -Rf $tmpDir && mkdir $tmpDir
 cp -R "$pkgDir/DEBIAN" "$pkgDir/etc" $tmpDir
+install -m 555 -D hubic.sh $tmpDir/usr/bin/hubic.sh
 chmod -R u=rwX,go=rX $tmpDir/*
 chmod u=rw,go= $tmpDir/etc/hubic/password
 chmod u=rwx,go=rx $tmpDir/DEBIAN/postinst $tmpDir/DEBIAN/postrm
