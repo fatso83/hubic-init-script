@@ -23,7 +23,7 @@ On Debian and Ubuntu, run these commands as root:
 
     git clone https://github.com/fatso83/hubic-init-script.git
     hubic-init-script/build-deb.sh
-    dpkg -i hubic-init-script_0.3_all.deb
+    dpkg -i hubic-init-script_*_all.deb
 
 This will install the script ready to be run at boot-time, but you will need to 
 edit the following three files to set various config values:
